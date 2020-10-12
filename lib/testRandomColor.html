@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <title>test random color</title>
+        <style>
+            #content div {
+                width: 200px;
+                height: 200px;
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="bin"></div>
+        <div id="content"></div>
+        <script>
+            function randomColor() {
+                var letters = '0123456789'.split('');
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    let rdm = Math.ceil(Math.random() * 9);
+                    color += letters[rdm];
+                }
+                return color;
+            }
+        </script>
+        <script src="../public/jquery-3.4.1.min.js"></script>
+        <script>
+            for(let i = 0 ; i < 50 ; i++) {
+                console.log(i)
+                $("#bin").clone().css("background", randomColor()).appendTo($("#content"));
+            }
+        </script>
+    </body>
+</html>

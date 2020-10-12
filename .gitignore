@@ -1,0 +1,5 @@
+/node_modules
+/data
+local-*
+sandbox.js
+/logs/*

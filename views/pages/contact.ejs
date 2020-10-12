@@ -1,0 +1,22 @@
+<div class="container text-center">
+    <div style="height: 100px; width: 100px; margin: 0 auto;">
+        <img src="/ressources/img/logo.png" alt="logo d'hyperblender" style="height: 100%;">
+    </div>
+    <h2 class="text-primary mt-3">hyperblender</h2>
+    <hr class="my-4">
+    <p class="lead my-4">gérez, filtrez et visualisez vos calendriers scolaires ou professionnels en toute simplicité</p>
+    <hr class="my-4">
+    <address class="my-4" style="font-size: 1.5em;">
+        <p>Mathias BLT</p>
+        <span>📩</span><br>
+        <a href="mailto:contact@hyperblender.be">contact@hyperblender.be</a>
+    </address>
+</div>
+
+<script src="/ressources/js/calendarsRequest.js"></script>
+<script>
+    // Collisions display
+    calendarsRequest(function(data) {
+        $("#collisionsCount").html(JSON.parse(data.response).collisions.length);
+    })
+</script>

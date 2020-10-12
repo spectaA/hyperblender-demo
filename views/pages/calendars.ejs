@@ -1,0 +1,542 @@
+<style>
+    .user-calendar {
+        max-height: 90vh;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mt-3">
+            <div class="dropdown">
+                <button class="btn btn-info dropdown-toggle" id="dropdownNewCal" data-toggle="dropdown">nouveau calendrier</button>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item" data-toggle="modal" data-target="#newCalURLModal"><i class="fas fa-link"></i> depuis une URL</a>
+                    <a href="#" class="dropdown-item" data-toggle="modal" data-target="#newCalFileModal"><i class="far fa-file"></i> depuis un fichier</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loading-cals" style="width: 100%;">
+        <div class="mx-auto" style="align-content: center; display: grid;">
+            <div class="spinner-grow text-dark my-4 mx-auto"></div>
+        </div>
+    </div>
+    <div class="accordion my-3" id="cals"></div>
+</div>
+
+<!-- Modals -->
+        <!-- URL -->
+<div id="newCalURLModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="m-0">nouveau calendrier depuis une URL (lien)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>importer un calendrier depuis une URL permet de le garder constement à jour. Il sera automatiquement actualisé.</p>
+                <form id="postCalURLForm" method="POST" action="/api/postCalURL">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">url</span>
+                        </div>
+                        <input type="text" class="form-control" name="url" required autofocus>
+                    </div>
+                    <label><strong>optionnel</strong> vous pouvez définir un alias <i class="fas fa-pen"></i> à votre calendrier</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><em>alias</em></span>
+                        </div>
+                        <input type="text" class="form-control smaller-field" name="alias" maxlength="60">
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="ajouter">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <small>une fois le lien collé, cliquer sur le bouton "ajouter"</small>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- FILE -->
+<div id="newCalFileModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="m-0">nouveau calendrier depuis une URL (lien)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>importer un calendrier depuis un fichier ne permet pas de le garder constement à jour. Il <strong>ne sera pas</strong> actualisé automatiquement.</p>
+                <form id="postCalFileForm" method="POST" action="/api/postCalFile" enctype="multipart/form-data">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">envoyer</span>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputFile" name="calFile" onchange="inputFileChanged(this)" required>
+                            <label class="custom-file-label" for="inputFile">choisir le fichier</label>
+                        </div>
+                    </div>
+                    <script>
+                        function inputFileChanged(sender) {
+                            let fn = sender.value.split('\\')
+                            document.querySelector(`[for=${sender.id}]`).innerHTML = fn[fn.length-1];
+                        }
+                    </script>
+                    <label><strong>optionnel</strong> vous pouvez définir un alias <i class="fas fa-pen"></i> à votre calendrier</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><em>alias</em></span>
+                        </div>
+                        <input type="text" class="form-control smaller-field" name="alias" maxlength="60">
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="ajouter">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <small>une fois le fichier choisi, cliquer sur le bouton "ajouter"</small>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- Edit -->
+<div id="editCal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="m-0">modifier l'alias <i class="fas fa-pen"></i> d'un calendrier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>optionnel</strong> vous pouvez définir un alias à votre calendrier</p>
+                <form id="editCalForm">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><em>alias</em></span>
+                        </div>
+                        <input type="text" class="form-control" id="editCalModalAliasInput" maxlength="30" autofocus>
+                    </div>
+                    <input type="text" id="editCalModalIdInput" value="" hidden>
+                    <input type="submit" class="btn btn-primary" value="modifier">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- New filter -->
+<div class="modal fade" id="newFilter">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="m-0">nouveau filtre</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Créer un filtre permet de masquer du calendrier tous les évènements correspondants à la valeur du filtre.<br>
+                    Pour cela vous devez choisir un <strong>champ</strong> auquel sera comparé la <strong>valeur</strong>.<br>
+                    Le <strong>sens</strong> permet de savoir si la valeur doit être <strong>inclue</strong> ou <strong>non inclue</strong> dans le champ.
+                </p>
+                <form id="addFilterForm">
+                    <h3>Masquer tous les évènements dont...</h3><br>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">champ</span>
+                        </div>
+                        <select name="field" required class="form-control smaller-field">
+                            <option value="title" selected>titre de l'évènement</option>
+                            <option value="loc">lieu de l'évènement</option>
+                            <option value="desc">description de l'évènement</option>
+                            <!-- <option value="dow">jour de la semaine de l'évènement</option> -->
+                            <!-- <option value="start">heure de début de l'évènement</option> -->
+                            <!-- <option value="end">heure de fin de l'évènement</option> -->
+                        </select>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-auto">
+                            <span class="input-group-text">sens</span>
+                        </div>
+                        <div class="col-auto pl-1">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" value="1" name="way" id="inputWay0" checked class="custom-control-input">
+                                <label for="inputWay0" class="custom-control-label">inclut...</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" value="0" name="way" id="inputWay1" class="custom-control-input">
+                                <label for="inputWay1" class="custom-control-label">n'inclut pas...</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">valeur</span>
+                        </div>
+                        <input type="text" name="val" required maxlength="30" class="form-control">
+                    </div>
+                    <input type="hidden" id="addFilter-calId" name="calId">
+                    <input type="submit" class="btn btn-primary" value="ajouter">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bin -->
+<div style="display: none;">
+    <!-- Calendar card template -->
+    <div class="card" id="calx">
+        <div class="card-header" id="calx-header">
+            <div class="row">
+                <div class="col-md-6">
+                    <span style="vertical-align: middle;"><i class="fas fa-square" id="calx-color"></i></span>
+                    <button class="btn btn-link" style="width: 90%; text-align: left;" data-toggle="collapse" data-target="#calx-main">
+                        <span id="calx-title"></span>
+                    </button>
+                </div>
+                <div class="col-md-6" style="text-align: right;">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-info btn-sm" id="calx-but-edit" data-toggle="modal" data-target="#editCal">modifier</button>
+                        <button class="btn btn-info btn-sm" id="calx-but-hide"><i class="fas fa-eye-slash"></i> masquer</button>
+                        <button class="btn btn-info btn-sm" id="calx-but-show"><i class="fas fa-eye"></i> afficher</button>
+                        <button class="btn btn-info btn-sm" id="calx-but-delete">supprimer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="collapse show" id="calx-main">
+            <div class="card-header py-2">
+                <small><span id="calx-desc"></span></small>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <!-- Calendar 1 -->
+                        <div id="calx-calendar" class="user-calendar"></div>
+                    </div>
+                    <div class="col-lg-5">
+                        <h2 class="mb-2">filtres</h2>
+                        <ul class="list-group pb-3" id="calx-filters">
+                            <!-- Filters list -->
+                        </ul>
+                        <div class="text-right">
+                            <button id="calx-filters-add" class="btn btn-info" data-toggle="modal" data-target="#newFilter"><i class="fas fa-plus"></i> ajouter un filtre</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-right" style="font-size: 0.8rem;">
+                    <div class="col-12">
+                        dernière synchronisation : <span id="calx-lastUpdate"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Filter template -->
+    <li id="liEmptyFilter" class="list-group-item">
+        <div class="badge badge-secondary">
+            <span id="calx-filtery-cat"></span>
+        </div>
+        <span id="calx-filtery-way"></span>
+        <samp id="calx-filtery-cont"></samp>
+        <a id="calx-filtery-delete" type="button" class="btn btn-sm btn-light text-dark float-right" style="max-height: 100%; padding: 0 5px;">
+            <span><i class="fas fa-trash-alt"></i></span>
+        </a>
+    </li>
+    <!-- No calendar box -->
+    <div id="noCal">
+        <div class="alert alert-info">vous n'avez pas encore de calendrier.</div>
+    </div>
+    <!-- Alert template -->
+    <div id="emptyAlert" class="alert alert-dismissable fade show">
+        <span id="emptyAlertContent"></span>
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    </div>
+</div>
+
+<!-- Sandbox -->
+<div id="sandbox"></div>
+
+<!-- Gen script -->
+<script src="/ressources/js/calendarsRequest.js"></script>
+<script src="/ressources/js/calendarsActions.js"></script>
+<script src="/ressources/js/filterAction.js"></script>
+<script>
+
+    function buildFilter(calId, filter) {
+        function xyTn(x) {
+            let r = x.replace(/x/g, calId)
+            r = r.replace(/y/g, filter.id)
+            return r;
+        }
+        $("#liEmptyFilter").clone().appendTo($("#sandbox"));
+        $("#sandbox li").removeAttr("id").attr("id", xyTn("calx-filtery"));
+        $("#sandbox #calx-filtery-cat").attr("id", xyTn("calx-filtery-cat"));
+        $("#sandbox #calx-filtery-cont").attr("id", xyTn("calx-filtery-cont"));
+        $("#sandbox #calx-filtery-way").attr("id", xyTn("calx-filtery-way"));
+        $("#sandbox #calx-filtery-delete").attr("id", xyTn("calx-filtery-delete"));
+
+        // Filter values
+        let field;
+        switch(filter.field) {
+            case 'title' : field = "Titre"; break;
+            case 'loc' : field = "Lieu"; break;
+            case 'desc' : field = "Description"; break;
+            case 'dow' : field = "Jour de la semaine"; break;
+            case 'start' : field = "Heure de début"; break;
+            case 'end' : field = "Heure de fin"; break;
+            default: field = "error";
+        }
+        $(xyTn("#calx-filtery-cat")).append(field);
+        let way;
+        if(filter.way == 1) way = "inclu"
+        else way = "n'inclu pas";
+        $(xyTn("#calx-filtery-way")).append(way);
+        $(xyTn("#calx-filtery-cont")).append(filter.val);
+        $(xyTn("#calx-filtery-delete")).click(function() {
+            filterAction('DELETE', {
+                id: filter.id,
+                calId: calId
+            }, function() {
+                $(xyTn("#calx-filtery")).html("<em>Recharger la page pour mettre à jour</em>");
+                // setTimeout(function() {
+                //     $(xyTn("#calx-filtery")).remove();
+                // }, 1000);
+            });
+        });
+        $("#sandbox li").appendTo(xyTn("#calx-filters"));
+    }
+
+    // Calendar building
+    function buildCalendar(cal, num) {
+        // Clone
+        $("#calx").clone().appendTo("#cals");
+        // Change ids
+        function xTn(x) {
+            return x.replace(/x/g, num)
+        }
+        $("#cals #calx").attr("id", xTn("calx"));
+        $("#cals #calx-header").attr("id", xTn("calx-header"));
+        $("#cals #calx-main").attr("id", xTn("calx-main"));
+        $('#cals [data-target="#calx-main"]').attr("data-target", xTn("#calx-main"));
+        $("#cals #calx-calendar").attr("id", xTn("calx-calendar"));
+        $("#cals #calx-lastUpdate").attr("id", xTn("calx-lastUpdate"));
+        $("#cals #calx-filters").attr("id", xTn("calx-filters"));
+        $("#cals #calx-filters-add").attr("id", xTn("calx-filters-add"));
+        $("#cals #calx-title").attr("id", xTn("calx-title"));
+        $("#cals #calx-color").attr("id", xTn("calx-color"));
+        $("#cals #calx-desc").attr("id", xTn("calx-desc"));
+        $("#cals #calx-but-edit").attr("id", xTn("calx-but-edit"));
+        $("#cals #calx-but-delete").attr("id", xTn("calx-but-delete"));
+        $("#cals #calx-but-hide").attr("id", xTn("calx-but-hide"));
+        $("#cals #calx-but-show").attr("id", xTn("calx-but-show"));
+
+        // Set alias
+        $(xTn("#calx-title")).append(cal.alias || "<em>Calendrier sans nom</em>");
+        // Set desc
+        if(cal.hasOwnProperty('desc')) $(xTn("#calx-desc")).append(cal.desc);
+        else $(xTn("#calx-desc")).parent().parent().remove();
+        // Set square color
+        $(xTn("#calx-color")).attr("style", "color:" + cal.color);
+        // Set last update
+        if(cal.lastUpdate) cal.lastUpdate = new Date(cal.lastUpdate).toLocaleString("fr");
+        $(xTn("#calx-lastUpdate")).append(cal.lastUpdate || "<em>jamais</em>");
+
+        // Display filters
+        cal.filters.forEach(function(f) {
+            buildFilter(num, f);
+        })
+
+        // Set hide or show button and adjust color
+        if(cal.visible) {
+            $(xTn("#calx #calx-but-show")).addClass("d-none");
+        } else {
+            $(xTn("#calx #calx-but-hide")).addClass("d-none");
+            $(xTn("[data-target='#calx-main']")).addClass("disabled");
+            // Change color
+            $(xTn("#calx-color")).attr("style", "color:#ccc");
+        }
+
+        // Button edit eventListener
+        $(xTn("#calx-but-edit")).click(function(e) {
+            $("#editCalModalAliasInput").val(cal.alias);
+            $("#editCalModalIdInput").val(cal.id);
+        });
+        // Button delete eventListener
+        $(xTn("#calx-but-delete")).click(function(e) {
+            if(confirm("Voulez vous vraiment supprimer ce calendrier ?")) {
+                calendarsActions({
+                    type: 'delete',
+                    id: cal.id
+                }, function() {
+                    $(xTn("#calx")).remove();
+                    $("#emptyAlert").clone().appendTo("#alertZone");
+                    $("#alertZone #emptyAlert").removeAttr("id").addClass("alert-success");
+                    $("#alertZone #emptyAlertContent").removeAttr("id").html("calendrier supprimé");
+                })
+            }
+        });
+        // Button hide eventListener
+        $(xTn("#calx-but-hide")).click(function(e) {
+            calendarsActions({
+                type: 'hide',
+                id: cal.id
+            }, function() {
+                // Change button
+                $(xTn("#calx-but-hide")).toggleClass("d-none");
+                $(xTn("#calx-but-show")).toggleClass("d-none");
+                // Disable link & close tab
+                $(xTn("[data-target='#calx-main']")).addClass("disabled");
+                $(xTn("#calx-main")).removeClass("show");
+                // Change color
+                $(xTn("#calx-color")).attr("style", "color:#ccc");
+
+            })
+        });
+        // Button show eventListener
+        $(xTn("#calx-but-show")).click(function(e) {
+            calendarsActions({
+                type: 'show',
+                id: cal.id
+            }, function() {
+                // Change button
+                $(xTn("#calx-but-hide")).toggleClass("d-none");
+                $(xTn("#calx-but-show")).toggleClass("d-none");
+                // Enable link
+                $(xTn("[data-target='#calx-main']")).removeClass("disabled");
+                // Change color
+                $(xTn("#calx-color")).attr("style", "color:" + cal.color);
+            })
+        });
+        // Button add filter eventListener
+        $(xTn("#calx-filters-add")).click(function(e) {
+            $("#addFilter-calId").val(cal.id);
+        })
+
+        // Gen calendar & events
+        let calElmt = document.getElementById(xTn("calx-calendar"));
+        let calendar = new FullCalendar.Calendar(calElmt, {
+            plugins: ['dayGrid', 'bootstrap', 'timeGrid', 'list'],
+            height: window.innerHeight - 120,
+            themeSystem: 'bootstrap',
+            defaultView: $(window).width() < 768 ? 'timeGridDay' : 'dayGridMonth',
+            timeZone: 'local',
+            locale: 'fr',
+            firstDay: 1,
+            nowIndicator: true,
+            fixedWeekCount: false,
+            slotEventOverlap: false,
+            header: {
+                left: 'title',
+                right: $(window).width() < 768 ? 'prev,next' : 'today dayGridMonth,timeGridWeek,timeGridDay prev,next'
+            },
+            buttonText: {
+                today: 'maintenant',
+                month: 'mois',
+                week: 'semaine',
+                day: 'jour',
+            },
+            eventRender: function(info) {
+                let ev = info.event._def
+                let cont = "";
+                cont += `<header><i class="fas fa-calendar-alt"></i> ${ev.title}</header>`;
+                if(ev.extendedProps.location) cont += `<footer><i class="fas fa-map-marker-alt"></i> ${ev.extendedProps.location}</footer>`;
+                if(ev.extendedProps.description) cont += `<p><i class="fas fa-align-left"></i> ${ev.extendedProps.description}</p>`;
+                tippy(info.el, {
+                    content: cont,
+                    theme: 'hb',
+                    hideOnClick: true
+                });
+            }
+        });
+        // Events
+        cal.events.forEach(function(e) {
+            calendar.addEvent({
+                id: e.uid,
+                title: e.summary,
+                description: e.description,
+                location: e.location,
+                start: e.start,
+                end: e.end,
+                color: cal.color
+            })
+        });
+        // Render
+        calendar.render();
+
+        // // Decode URI params
+        // let url = new URL(window.location.href);
+        // let calId = url.searchParams.get("cid");
+        // let dateTime = new Date(decodeURIComponent(url.searchParams.get("dt")));
+        // if(cal.id == calId && dateTime != null) {
+        //     // $(`#cal${params.calId}-main`).addClass("show");
+        //     console.log("show")
+        //     calendar.gotoDate(dateTime);
+        // } else {
+        //     console.log("no show")
+        //     $(`#cal${calId}-main`).removeClass("show");
+        // }
+
+    }
+
+    function calendarsLoaded(data) {
+        data = JSON.parse(data.response);
+        $("#cals").empty();
+        $("#loading-cals").hide();
+        // Hide modals
+        $(".modal").modal('hide');
+        // Calendars
+        if(data.calendars.length) {
+            data.calendars.forEach(function(d) {
+                buildCalendar(d, d.id)
+            })
+        } else {
+            $("#cals").append($("#noCal"));
+        }
+        // Close accordion
+        $(".accordion .collapse.show").removeClass("show");
+        // Collisions count display
+        $("#collisionsCount").html(data.collisions.length);
+    }
+
+    // Start
+    calendarsRequest(calendarsLoaded);
+
+    // Modal edit submit
+    $("#editCalForm").submit(function(e) {
+        e.preventDefault();
+        calendarsActions({
+            type: 'edit',
+            id: $("#editCalModalIdInput").val(),
+            alias: $("#editCalModalAliasInput").val()
+        }, function() {
+            $("#editCal").modal("hide");
+            calendarsRequest(calendarsLoaded);
+        })
+    })
+    // Modal addFilter submit
+    $("#addFilterForm").submit(function(e) {
+        e.preventDefault();
+        let filterDetails = {
+            field: $("#addFilterForm [name='field']").val(),
+            way: $("#addFilterForm [name='way']:checked").val(),
+            val: $("#addFilterForm [name='val']").val(),
+            calId: $("#addFilterForm [name='calId']").val()
+        };
+        filterAction('PUT', filterDetails, function(data) {
+            filterDetails.id = data;
+            buildFilter(filterDetails.calId, filterDetails);
+            $("#newFilter").modal("hide");
+        });
+    })
+
+</script>

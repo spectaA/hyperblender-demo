@@ -1,0 +1,57 @@
+<!--  -->
+<!-- Meta: pageTitle -->
+<!--  -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title>hyperblender - <%=pageTitle%></title>
+    <% include ../partials/global-metas %>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+        .container-fluid>.container>* {
+            min-height: 100vh;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100vw;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <!-- Header -->
+    <div class="container-fluid bg-primary">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 text-light text-center mb-3">
+                    <div class="mb-2 mt-3 my-md-5">
+                        <i class="fas fa-blender" style="height: 10vh; width: 10vh;"></i>
+                    </div>
+                    <h1 class="my-2">hyperblender</h1>
+                    <p class="m-0">créez votre compte gratuitement pour commencer à utiliser HyperBlender. L'outil de fusion et d'adaptation d'agendas en ligne.</p>
+                    <div class="d-none d-md-inline">
+                        <div class="btn-group-vertical mx-auto my-4 shadow bg-white rounded">
+                            <a href="/auth/login" class="btn btn-light p-3" title="Vous avez déjà un compte">se connecter</a>
+                            <a href="/auth/register" class="btn btn-light p-3" title="Vous voulez créer un compte">créer un compte</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 align-middle mb-5 my-md-5">
+                    <!-- View -->
+                    <%-body%>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-dark text-light py-3">
+        <% include ../partials/global-footer %>
+    </footer>
+    <% include ../partials/global-scripts %>
+    <%- script %>
+</body>
+
+</html>

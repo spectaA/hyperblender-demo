@@ -1,0 +1,67 @@
+<div class="container">
+    <div class="list-group logsList"></div>
+    <div class="logsList2"></div>
+    
+    <div class="bin" style="display: none;">
+        <a href="#" target="_blank" class="list-group-item list-group-item-action logsListItem">
+            <div class="row"></div>
+        </a>
+    </div>
+</div>
+
+<!-- Tabulator JS -->
+<link href="/ressources/css/tabulator.min.css" rel="stylesheet">
+<script src="/ressources/js/tabulator.min.js"></script>
+
+<script src="/ressources/js/basicGetRequest.js"></script>
+<script src="/ressources/js/calendarsRequest.js"></script>
+<script>
+    // Collisions display
+    calendarsRequest(function(data) {
+        $("#collisionsCount").html(JSON.parse(data.response).collisions.length);
+    })
+    
+    getRequest('/api/logsList', function(data) {
+        data = JSON.parse(data);
+        let tab = new Tabulator(".logsList2", {
+            autoColumns: true,
+            history: true,
+            movableColumns: true,
+            dataTree: true,
+            columns: [
+                { title: "Logo", field: "logo" },
+                { title: "Horodatage", field: "datetime" },
+                { title: "Nom du fichier", field: "fileName" },
+                { field: "link", visible: false }
+            ],
+            rowClick:function(e, row) {
+                window.location.href = row._row.data.link
+            }
+        })
+        data.forEach(function(log) {
+            let splittedFileName = log.fileName.split('_');
+            let date = splittedFileName[0].split('-');
+            let time = splittedFileName[1].split('-');
+            let logType = splittedFileName[2];
+            console.log(date[0], date[1], date[2], time[0], time[1], time[2], 0);
+            let datetime = new Date(date[0], date[1]-1, date[2], time[0], time[1], time[2], 0).toLocaleString();
+            let logo;
+            if(logType === "err.log") logo = '❌';
+            if(logType === "out.log") logo = '📄';
+            tab.addData([{ logo: logo, datetime: datetime, fileName: log.fileName, link: log.link }], false);
+            // $(".bin .logsListItem")
+            //     .clone()
+            //     .appendTo(".logsList")
+            //     .attr('title', log.fileName)
+            //     .attr("href", log.link)
+            //     .click(function(e) {
+            //         e.preventDefault();
+            //         let params = "resizable=no,status=no,location=no,toolbar=no,menubar=no";
+            //         open(log.link, "", params);
+            //     })
+            //     .html(logo + ' ' + datetime + ' - <small>' + log.fileName + '</small>')
+            // o.children(".logsListItemLogo").html(logo);
+            // o.children('.logsListItemName').html(datetime);
+        })
+    })
+</script>

@@ -1,0 +1,207 @@
+<div class="container">
+    <div class="alert alert-danger" id="alertEmailZone"></div>
+</div>
+<div id="page-profile" class="container mb-2">
+    <div class="row my-3">
+        <div class="col-sm-2 d-none d-sm-block" style="color: #212529;">
+            <i class="fas fa-user" style="width: 100%; height: auto; padding: 10%;"></i>
+        </div>
+        <form class="col-sm-10 m-0" id="profileForm">
+            <div class="alerts-zone"></div>
+            <h2>informations personnelles</h2>
+            <div class="row my-3">
+                <div class="col-md-2 mt-2 mt-md-0">
+                    <label for="inputName">nom</label>
+                </div>
+                <div class="col-md-10 mt-2 mt-md-0">
+                    <input type="text" id="inputName" name="name" class="form-control changes-allowed" required>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-md-2 mt-2 mt-md-0">
+                    <label for="inputEmail">email</label>
+                </div>
+                <div class="col-md-10 mt-2 mt-md-0">
+                    <input type="email" id="inputEmail" name="email" class="form-control changes-allowed" required>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-md-2 mt-2 mt-md-0">
+                    <label>mot de passe</label>
+                </div>
+                <div class="col-md-10 mt-2 mt-md-0">
+                    <div class="vertical-input-group">
+                        <div class="input-group">
+                            <input type="password" id="inputPassword1" name="password1" class="form-control changes-allowed" placeholder="nouveau mot de passe">
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="inputPassword2" name="password2" class="form-control changes-allowed" placeholder="confirmer le nouveau mot de passe">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-md-2 mt-2 mt-md-0">
+                    <label>status</label>
+                </div>
+                <div class="col-md-10 mt-2 mt-md-0">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <label for="selectClass" class="input-group-text">je suis</label>
+                        </div>
+                        <select class="custom-select" id="selectClass" name="status">
+                            <option value="esec">étudiant secondaire (collège, lycée, ...)</option>
+                            <option value="esup1">étudiant supérieur (Bachelier, BTS, DUT, Licence, ...)</option>
+                            <option value="esup2">étudiant supérieur (Master, Doctorat, ...)</option>
+                            <option value="other">autre</option>
+                            <option disabled></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-md-2 mt-2 mt-md-0">
+                    <label>lien d'abonnement</label>
+                </div>
+                <div class="col-md-10 mt-2 mt-md-0">
+                    <div class="input-group">
+                        <input id="subLink" type="text" class="form-control" readonly>
+                        <div class="input-group-append">
+                            <button id="copyButton" class="btn btn-outline-secondary" type="button" onclick="copySubLink()">Copier</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <input type="button" data-toggle="modal" data-target="#profileEditConfirmModal" class="form-control btn-info" value="enregistrer" style="max-width: 200px; margin: 0 auto;">
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- modals -->
+<div id="profileEditConfirmModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">modifier votre profil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Voulez-vous vraiment modifier votre profile ?</p>
+                <ul>
+                    <li>Votre email devra être <strong>validée</strong> à nouveau</li>
+                    <li>Votre lien d'abonnement actuel sera <strong>périmé</strong> et inutilisable</li>
+                    <li>Ces modifications sont <strong>irréversibles</strong></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button id="editConfirm" type="button" class="btn btn-danger">confirmer</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">annuler</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- bin -->
+<div id="bin" style="display: none;">
+    <div id="changes-saved" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span class="alert-text">modifications enregistrées</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div id="emailInstructions">
+        <div class="text-center">
+            <p>
+                <strong>Un email a été envoyé sur votre adresse email.</strong><br>
+                <em><span id="userEmail"></span></em>
+            </p>
+            <p>
+                Celui-ci contient un lien pour vérifier votre adresse email.<br>
+                Une fois ce lien cliqué, votre adresse email sera validée et vous aurez accès à toutes les fonctionnalités du site.
+            </p>
+            <p>
+                <strong>Si vous avez fait une erreur dans l'orthographe de votre adresse email, modifiez-la ci-dessous.</strong>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script src="/ressources/js/calendarsRequest.js"></script>
+<script src="/ressources/js/profileRequest.js"></script>
+<script src="/ressources/js/profileAction.js"></script>
+<script src="/ressources/js/tokenInfosRequest.js"></script>
+<script>
+
+    // Copy sub link
+    function copySubLink() {
+        let copyText = document.getElementById("subLink");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+    }
+
+    // Build profile
+    function buildProfile(profile) {
+        // Clear former invalid classes and inputs
+        $(".changes-allowed").removeClass("is-invalid").val("");
+        // Build profile
+        $("#inputName").val(profile.name);
+        $("#inputEmail").val(profile.email);
+        let status = $(`#selectClass [value=${profile.status}]`);
+        status.length == 1 ?
+            status.attr("selected", "true") :
+            $("#selectClass [disabled]").removeAttr("disabled").attr("selected", "true").html(profile.status);
+        console.log("Profile builded");
+        // Display email in EmailValidation alert
+        $("#userEmail").append(profile.email);
+    }
+
+    // Profile Action (on form submit)
+    $("#editConfirm").click(function (e) {
+        // $("#profileForm").submit(function(e) {
+        // e.preventDefault();
+        $("#profileEditConfirmModal").modal("hide");
+        let formData = $("#profileForm").serializeArray().reduce(function (obj, item) {
+            obj[item.name] = item.value;
+            return obj;
+        }, {});
+        // Submit fields
+        profileAction(formData, function (data) {
+            // 200
+            console.log(data);
+            $("#changes-saved").clone().appendTo(".alerts-zone");
+        }, function (errorText) {
+            // 400 || 500
+            errorText = JSON.parse(errorText)
+            console.error(errorText);
+            $(`[type=${errorText.field}]`).addClass("is-invalid");
+            setTimeout(function () {
+                profileRequest(buildProfile);
+            }, 3000)
+        });
+    });
+
+    // Profile Request
+    profileRequest(buildProfile);
+
+    // Token request
+    tokenInfosRequest(function(data) {
+        if(data.err) {
+            $("#subLink").val("Veuillez validez votre adresse email");
+            $("#copyButton").attr("disabled", "").attr("title", "J'ai dis non");
+            $("#alertEmailZone").html($("#emailInstructions"));
+        } else {
+            $("#subLink").val(data.subLink);
+            $("#alertEmailZone").remove();
+        }
+    })
+
+    // Collisions display
+    calendarsRequest(function(data) {
+        $("#collisionsCount").html(JSON.parse(data.response).collisions.length);
+    })
+</script>

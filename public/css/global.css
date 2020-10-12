@@ -1,0 +1,118 @@
+/* layout default : header dropdown background colors */
+.navbar #dropdown-profile :active {
+    background: var(--secondary);
+}
+.navbar #dropdown-profile #logout-item:active {
+    background: var(--danger);
+    color: var(--light) !important;
+}
+
+/* Custom vertical input group */
+.vertical-input-group .input-group:first-child {
+    padding-bottom: 0;
+}
+.vertical-input-group .input-group:first-child * {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;    
+}
+.vertical-input-group .input-group:last-child {
+    padding-top: 0;
+}
+.vertical-input-group .input-group:last-child * {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.vertical-input-group .input-group:not(:last-child):not(:first-child) {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.vertical-input-group .input-group:not(:last-child):not(:first-child) * {
+    border-radius: 0;
+}  
+.vertical-input-group .input-group:not(:first-child) * {
+    border-top: 0;
+}
+
+/* Custom tippy */
+.tippy-tooltip.hb-theme {
+    background: var(--light);
+    color: #212529;
+    box-shadow: 0 0 10px 0 var(--dark);
+    cursor: pointer;
+}
+.tippy-tooltip.hb-theme[data-placement^='top'] .tippy-arrow {
+    border-top-color: var(--light);
+}
+.tippy-tooltip.hb-theme[data-placement^='bottom'] .tippy-arrow {
+    border-bottom-color: var(--light);
+}
+.tippy-tooltip.hb-theme[data-placement^='left'] .tippy-arrow {
+    border-left-color: var(--light);
+}
+.tippy-tooltip.hb-theme[data-placement^='right'] .tippy-arrow {
+    border-right-color: var(--light);
+}
+.tippy-tooltip.hb-theme header {
+    margin-top: 5px;
+    font-weight: bold;
+}
+.tippy-tooltip.hb-theme p {
+    border-top: 1px solid var(--dark);
+    margin-top: 5px;
+    padding-top: 5px;
+}
+.fc-event {
+    cursor: pointer;
+}
+
+/* Calendars page : custom colors on hide, show & delete buttons */
+[id*="-but-hide"] {
+    width: 100px;
+}
+[id*="-but-show"] {
+    width: 100px;
+}
+[id*="-but-delete"]:hover {
+    background: var(--danger);
+    border: 1px solid var(--red);
+}
+
+/* Modals, max-width alias field */
+.smaller-field {
+    max-width: 300px;
+}
+
+/* Collision page, collision calendar column */
+.coll-cal-trunc {
+    max-width: 25vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dashboard page, subscribe modal button animation */
+@keyframes zoomInOut {
+    0%, 40% {
+        transform: scale(1);
+    }
+    20% {
+        transform: scale(0.95);
+    }
+}
+.animZoomInOut {
+    animation: zoomInOut 3s infinite ease-in-out;
+}
+.animZoomInOut:hover, .animZoomInOut:focus {
+    animation: none;
+}
+
+/* Custom input : time */
+.time-control {
+    width: 100px;
+    display: inline-block;
+}
+
+/* Profile page forms margin */
+#page-profile form {
+    margin-top: 1em;
+}

@@ -1,0 +1,105 @@
+<div class="container" id="tutorial-page">
+
+    <p class="lead text-center py-4">
+        vous trouverez sur cette page le tutoriel d'utilisation d'hyperblender.<br>
+    </p>
+
+    <div id="tutorial-anim-container">
+        <video style="max-width: 100%;" src="/ressources/videos/tutorial-anim.mp4" autoplay mute loop playsinline>lecture de la vidéo impossible</video>
+    </div>
+    <hr class="my-4">
+    <h4 id="i-p-dashboard">page d'accueil</h4>
+    <p>
+        Page affichant votre <strong>agenda</strong> complet. C'est celui que vous récupérerez au final, celui qui sera exporté.
+        Chacun de vos calendriers activés est affiché dans sa propre couleur. En cas d'oubli, une légende est présente sous l'agenda.
+    </p>
+    <p>
+        Sous l'agenda, vous trouverez : <a href="#i-d-sublink">le lien d'abonnement</a> et <a href="#i-d-dllink">le lien de téléchargement</a>
+    </p>
+    <hr class="my-4">
+    <h4 id="i-p-calendars">page calendriers</h4>
+    <p>
+        Page contenant la liste de tous vos <a href="#i-d-calendar">calendriers</a>. Vous pouvez en ajouter de nouveaux grâce au bouton dédié.<br>
+        C'est ici que vous pourrez cacher, afficher, modifier et supprimer les calendriers. C'est aussi ici que vous gérerez les <a href="#i-d-filter">filtres</a> aux calendriers.
+    </p>
+    <hr class="my-4">
+    <h4 id="i-p-collisions">page collisions</h4>
+    <p>
+        Page recensant les événements se chevauchant dans votre <a href="#i-d-agenda">agenda</a>, les événements qui se passent durant la même tranche horaire.
+        Vous aurez comme information la date/heure précise du début de ce chevauchement ainsi que sa durée. Les deux calendriers cités sont les deux calendriers étant impliqués dans cette collision.<br>
+        Elles sont triées de la plus proche à la plus lointaine.
+    </p>
+    <hr class="my-4">
+    <h4 id="i-p-profile">page profil</h4>
+    <p>
+        Page sur laquelle vous pouvez modifier vos informations personnelles, votre mot de passe et récupérer votre <a href="#i-d-sublink">lien d'abonnement</a>.
+    </p>
+    <hr class="my-4">
+    <h4 id="i-lexique">lexique</h4>
+    <dl id="i-d-agenda">
+        <dt>Agenda</dt><dd>Agenda complet comprenant tous vos <a href="#i-d-calendar">calendriers</a> affichés. Il se trouve sur la <a href="/app/dashboard">page d'accueil</a>.</dd>
+    </dl>
+    <dl id="i-d-calendar">
+        <dt><i class="far fa-calendar-alt"></i> Calendrier</dt><dd>
+            Les calendriers sont ceux que vous pouvez importer, ils seront fusionnés dans l'agenda.<br>
+            Ils peuvent être <strong><i class="fas fa-eye-slash"></i> cachés</strong> : ils ne seront alors plus affichés dans votre <a href="#i-d-agenda">agenda</a> et seront grisés.<br>
+            Ils peuvent porter un <strong><a href="#i-d-alias">alias</a></strong> qui pourra être modifié sur la page <a href="#i-p-calendars">calendriers</a>.<br>
+            Les événements d'un calendrier peuvent être <strong>filtrés</strong> suivant plusieurs critères grâce aux <a href="#i-d-filter">filtres</a>.
+        </dd>
+    </dl>
+    <dl id="i-d-filter">
+        <dt><i class="fas fa-filter"></i> filtre</dt><dd>
+            Les filtres sont associés à un <a href="#i-d-calendar">calendrier</a> et agissent sur ses événements.<br>
+            Un filtre agit sur un <strong>champ</strong> de l'événement : son titre, son emplacement ou sa description.<br>
+            C'est à ce champ que sera comparé la <strong>valeur</strong> du filtre.<br>
+            Le <strong>sens</strong> du filtre peut être inclusif <small>(exclu les événements dont le champ contient la valeur : par défaut)</small> ou exclusif <small>(exclu les événements dont le champ ne contient pas la valeur)</small>.<br>
+            <strong>Note :</strong> les événements filtrés ne seront plus affiché dans le calendrier ni dans l'agenda.
+        </dd>
+    </dl>
+    <dl id="i-d-alias">
+        <dt><i class="fas fa-pen"></i> alias</dt><dd>L'alias d'un calendrier est un surnom optionnel qui remplace le nom par défaut de celui-ci. Il peut être modifié à tout moment. Le nom par défaut reviendra si vous attribuez un alias vide.</dd>
+    </dl>
+    <dl id="i-d-collision">
+        <dt><i class="fas fa-exclamation-circle"></i> collision</dt><dd>Une collision est un moment pendant lequel deux événements du même ou de deux calendriers différents se passent en même temps.</dd>
+    </dl>
+    <dl id="i-d-dllink">
+        <dt><i class="fas fa-file"></i> lien de téléchargement</dt>
+        <dd>
+            Ce lien vous permettra de télécharger un fichier <code>ical</code> que vous pourrez utiliser dans toutes les applications qui le prendront en charge.
+        </dd>
+    </dl>
+    <dl id="i-d-sublink">
+        <dt><i class="fas fa-link"></i> lien d'abonnement</dt>
+        <dd>
+            <div>Ce lien, que vous pouvez copier-coller, est celui que vous utiliserez comme lien dans votre application Google Agenda, Microsoft Outlook ou autre.</div>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <div class="text-center p-1 rounded-top">Google Agenda</div>
+                    <hr class="my-1">
+                    <div class="rounded-bottom text-justify">
+                        Sur ordinateur uniquement, dans la section gauche de la page, un bouton <i class="fas fa-plus"></i> apparaît à côté de la mention <strong>"Autres agendas"</strong>.
+                        Sélectionner <strong>"A partir de l'URL"</strong>. Sur cette page, entrer le <a href="/app/dashboard" title="Dans le bas de la page : bouton lien d'abonnement">lien d'abonnement</a>.<br>
+                        <small>Pour l'afficher sur votre smartphone, activez la synchronisation du calendrier dans les paramètres de l'application Agenda.</small>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                        <div class="text-center p-1 rounded-top">Outlook Calendar</div>
+                        <hr class="my-1">
+                        <div class="rounded-bottom">
+                            Sur ordinateur, dans la section gauche de la page, cliquer sur <strong>"Ajouter un calendrier"</strong> puis sur <strong>"S'abonner à partir du web"</strong>.
+                            Sur cette page, entrer le <a href="/app/dashboard" title="Dans le bas de la page : bouton lien d'abonnement">lien d'abonnement</a>.
+                        </div>
+                    </div>
+            </div>
+
+        </dd>
+    </dl>
+</div>
+
+<script src="/ressources/js/calendarsRequest.js"></script>
+<script>
+    // Collisions display
+    calendarsRequest(function(data) {
+        $("#collisionsCount").html(JSON.parse(data.response).collisions.length);
+    })
+</script>

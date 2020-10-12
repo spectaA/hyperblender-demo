@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div style="text-align: center; padding: 10px; font-family: sans-serif;">
+            <div style="width: 100%; max-width: 600px; margin: 10px auto; padding: 30px 10px; background: #007bff; border-radius: 1rem; color: #fff; box-shadow: 0px 0px 10px 10px rgba(0,0,0,0.25);">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td>
+                                <div style="height: 100px;">
+                                    <img style="height: 100%;" src="https://hyperblender.be/ressources/img/logo-white.png" alt="logo de hyperblender">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h1>hyperblender</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h2>
+                                    Bienvenue sur hyperblender, <%=username%>
+                                </h2>
+                                <p>
+                                    Vous vous êtes récemment inscrit sur <a style="color: lightgray;" href="hyperblender.be">hyperblender.be</a> avec votre adresse email <span style="background: #fff; border-radius: .25px;"><%=usermail%></span>.<br>
+                                    Votre compte sera complet lorsque vous aurez vérifié votre adresse email.
+                                </p>
+                                <div style="width: 100%; margin: 30px 0;">
+                                    <a style="background: #fff; border-radius: .25rem; border: 0; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); padding: 10px; font-size: 1.3em; color:#007bff; text-decoration: none;" href="<%=validationLink%>">valider mon compte</a>
+                                </div>
+                                <p style="font-size: .8em;">
+                                    Si vous n'êtes pas à l'origine de cette inscription et pensez que votre adresse email a été usurpée, cliquez <a style="color: lightgray;" href="<%=cancelLink%>">ici</a>.
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>
+                                    Cet email a été envoyé automatiquement par hyperblender.<br>
+                                    Le compte a été créé le <%=registerDate%>.
+                                </p>
+                                <h3 style="margin-top: 30px; margin-bottom: 5px;">nous contacter</h3>
+                                <div style="margin-top: 0px; margin-bottom: 30px;">
+                                    Mathias B.<br>
+                                    <a style="color: lightgray;" href="mailto:contact@hyperblender.be">contact@hyperblender.be</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+            </div>
+        </div>
+    </body>
+</html>

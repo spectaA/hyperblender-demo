@@ -1,0 +1,29 @@
+{
+    "PORT": 3000,
+    "ADMIN_ROLES_ID": [9, 10],
+    "MAX_CAL_ALIAS_LENGTH": 30,
+    "MAX_FILTER_VAL_LENGTH": 30,
+    "DELAY_BETWEEN_CALS_UPDATE": 30,
+    "TOKEN_PARAMS": {
+        "length": 30,
+        "numbers": true,
+        "symbols": false,
+        "uppercase": true,
+        "excludeSimilarCharacters": false
+    },
+    "USERNAME_MAX_LENGTH": 30,
+    "USERPASSWORD_SALT_ROUNDS": 10,
+    "USERPASSWORD_MIN_LENGTH": 5,
+    "CAL_TTL_SECONDS": 10,
+    "MAX_FILE_LENGTH_BYTES": 16777215,
+    "NODEMAILER_TRANSPORTER_PARAMS": {
+        "pool": true,
+        "host": null,
+        "port": 465,
+        "secure": true,
+        "auth": {
+          "user": null,
+          "pass": null
+        }
+      }
+}

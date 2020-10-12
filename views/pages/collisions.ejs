@@ -1,0 +1,119 @@
+<div class="container">
+    <div id="loading-colls" style="width: 100%;">
+        <div class="mx-auto" style="align-content: center; display: grid;">
+            <div class="spinner-border text-dark my-4 mx-auto"></div>
+        </div>
+    </div>
+
+    <table class="table" id="colls" style="display: none;">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">date</th>
+                <th scope="col">durée</th>
+                <th scope="col">calendriers</th>
+            </tr>
+        </thead>
+        <tbody id="colls-ul">
+            <tr id="colls-li-template" class="colls-li-item">
+                <td class="coll-countdown"></td>
+                <td class="coll-date"></td>
+                <td class="coll-dura"></td>
+                <td class="coll-cal">
+                    <div class="coll-cal-trunc">
+                        <i class="fas fa-square coll-cal-color0"></i> <a href="" class="coll-cal-alias0"></a>
+                    </div>
+                    <div class="coll-cal-trunc">
+                        <i class="fas fa-square coll-cal-color1"></i> <a href="" class="coll-cal-alias1"></a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Sandbox -->
+<div id="sandbox"></div>
+
+<!-- No calendar box -->
+<div id="noCol" style="display: none;">
+    <div class="alert alert-info">vous n'avez aucune collision.</div>
+</div>
+
+<!-- Gen script -->
+<script src="/ressources/js/calendarsRequest.js"></script>
+<script>
+
+    // Time left before date
+    function countDown(strDate) {
+        let d = new Date(strDate);
+        let sevenDays = new Date();
+        sevenDays.setDate(sevenDays.getDate() + 7);
+        if(d < new Date()) return "Maintenant";
+        else if(d < sevenDays) return "Cette semaine";
+        else {
+            let thisMonth = new Date();
+            let monthCount = 0;
+            while((d - thisMonth) > 0) {
+                thisMonth.setMonth(thisMonth.getMonth() + 1);
+                monthCount ++;
+            }
+            if(monthCount <= 1) return 'Ce mois ci'
+            return `Dans ${monthCount - 1} mois`;
+        }
+    }
+
+    // Collisions duration displaying
+    function duration(start, end) {
+        let d = Math.abs(new Date(start).getTime() - new Date(end).getTime()) / (60*60*1000);
+        if(d - Math.trunc(d) > 0) {
+            let h = Math.trunc(d);
+            let m = (d - Math.trunc(d)) * 60;
+            d = h + "h" + m;
+        } else {
+            d += "h";
+        }
+        return d;
+    }
+
+    // Build/generate collisions cards
+    function buildCollisions(data) {
+        if(data.collisions.length == 0) {
+            $("#colls").empty();
+            $("#noCol").removeAttr("style").appendTo("#colls");
+        } else {
+            data.collisions.forEach(function(c) {
+                // Clone
+                $("#colls-li-template").clone().appendTo("#sandbox");
+                $("#sandbox .colls-li-item").removeAttr("id");
+                // Append values
+                $("#sandbox .coll-countdown").append(countDown(c.start));
+    
+                $("#sandbox .coll-date").append(new Date(c.start).toLocaleString("fr"));
+                $("#sandbox .coll-dura").append(duration(c.start, c.end));
+                [0, 1].forEach(function(i) {
+                    $(`#sandbox .coll-cal-color${i}`).attr("style", `color: ${c.cals.colors[i]}`);
+                    $(`#sandbox .coll-cal-alias${i}`).append(c.cals.aliases[i]);
+                    $(`#sandbox .coll-cal-alias${i}`).attr("href", `/app/calendars/?cid=${c.cals.ids[i]}&dt=${encodeURIComponent(c.start)}`);
+                })
+                $("#sandbox .colls-li-item").appendTo("#colls-ul");
+            })
+            $("#colls-li-template").remove();
+        }
+    }
+
+    // Calendars loaded
+    function calendarsLoaded(data) {
+        data = JSON.parse(data.response);
+        $("#collisionsCount").html(data.collisions.length);
+        $("colls-ul").empty();
+        $("#loading-colls").hide();
+        $("#colls").removeAttr("style");
+        buildCollisions(data);
+    }
+
+    // Start
+    calendarsRequest(calendarsLoaded);
+
+</script>

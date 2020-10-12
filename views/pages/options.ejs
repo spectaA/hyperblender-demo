@@ -1,0 +1,18 @@
+<div class="container">
+    <h2>Calendriers</h2>
+    <form>
+        <p class="lead">Décidez des périodes d'affichage de vos calendriers</p>
+        <div class="form-group mb-3">
+            Afficher de <input class="form-control time-control" type="time" name="calViewFrom"> à <input class="form-control time-control" type="time" name="calViewTo">
+        </div>
+        <div class="custom-control custom-checkbox my-1 mr-sm-2 mb-3">
+            <label class="custom-control-label" for="calViewWE">Afficher les week-end</label>
+            <input type="checkbox" class="custom-control-input" id="calViewWE" name="calViewWE">
+        </div>
+        <div class="custom-control custom-checkbox my-1 mr-sm-2 mb-3">
+            <label class="custom-control-label" for="calEnableCollisions">Activer la détection de collisions</label>
+            <input type="checkbox" class="custom-control-input" id="calEnableCollisions" name="calEnableCollisions"><br>
+            <small>Si vous désactivez ce paramètre, les <a href="/app/tutorial#i-d-collision">collisions</a> ne seront ni calculées, ni affichées.</small>
+        </div>
+    </form>
+</div>

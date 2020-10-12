@@ -1,0 +1,252 @@
+<!-- CONTENT -->
+<div class="container pt-3">
+    <div id="loading-cals" style="width: 100%;">
+        <div class="mx-auto" style="align-content: center; display: grid;">
+            <div class="spinner-grow text-dark my-4 mx-auto"></div>
+        </div>
+    </div>
+</div>
+<div class="pb-3" id="uc-container">
+    <div id="uc" class="col-lg-10 offset-lg-1 col-12 offset-0" style="display: none;"></div>
+    <div id="cals-legends" class="col-lg-10 offset-lg-1 col-12 offset-0 my-3" style="display: none;"></div>
+</div>
+<div class="container-fluid bg-primary text-light">
+    <div class="container">
+        <div class="col-lg-12 py-3">
+            <div class="row mb-3">
+                <h2>utiliser mon calendrier</h2>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6 pb-2">
+                    <div class="card text-dark bg-light">
+                        <div class="card-header">lien d'abonnement</div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                Afin d'intégrer votre calendrier à votre agenda Google, Microsoft ou autre.
+                                Il sera alors mis à jour <strong>automatiquement</strong> après chaque modification.
+                                <div>
+                                    <span class="badge badge-primary">Tuto</span>
+                                    <a href="/app/tutorial#i-d-sublink"> Comment utiliser le lien d'abonnement ?</a>
+                                </div>
+                            </p>
+                            <a href="#" id="subLinkModalButton" class="btn btn-block btn-info animZoomInOut" data-toggle="modal" data-target="#modal-getLink">obtenir le lien</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 pb-2">
+                    <div class="card text-dark bg-light">
+                        <div class="card-header">téléchargement</div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                Télécharger votre calendrier après chaque modification
+                                <em>(format <code>.ics</code>)</em>. <strong>Il ne sera pas
+                                    mis à jour automatiquement</strong>.
+                            </p>
+                            <a href="#" id="dlLink" class="btn btn-block btn-secondary">télécharger</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+
+<div class="modal fade" id="modal-getLink" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mon lien d'abonnement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group py-3">
+                    <input id="subLink" type="text" class="form-control" readonly>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onclick="copySubLink()">Copier</button>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <span class="badge badge-primary">Tuto</span> <a href="/app/tutorial#i-d-sublink">Que faire de ce lien ?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-emailNotVerified" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Veuillez valider votre email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger text-center">
+                    <p>
+                        Vous n'avez pas accès au partage d'agenda tant que vous n'avez pas vérifié votre adresse email.
+                    </p>
+                    <a class="btn btn-danger" href="/app/profile">Plus d'informations ici</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bin -->
+<div class="bin" style="display: none;">
+    <div id="calx-legend">
+        <i class="fas fa-square"></i>
+        <span></span>
+    </div>
+    <div id="noCal">
+        <div class="alert alert-info">Vous n'avez pas encore de calendrier.</div>
+    </div>
+</div>
+
+<script src="/ressources/js/calendarsRequest.js"></script>
+<script src="/ressources/js/tokenInfosRequest.js"></script>
+<script>
+    // Copy link script
+    function copySubLink() {
+        let copyText = document.getElementById("subLink");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        document.getElementById("subLinkContainer").innerHTML = '<div class="alert alert-success">Lien copié !</div>'
+        document.getElementById("subLink").addEventListener('focusout', function () {
+            document.getElementById("subLinkContainer").innerHTML = ''
+        })
+    }
+
+    // Resize calendar on window resize
+    function windowResizeCheck() {
+        $(window).width() < 768 ?
+        $("#uc-container").removeClass("container").addClass("container-fluid") :
+        $("#uc-container").removeClass("container-fluid").addClass("container");
+    }
+    $(window).resize(windowResizeCheck());
+    windowResizeCheck();
+
+    // Gen script
+    function generateCalendar(cals) {
+        // Calendar properties
+        let calendar = new FullCalendar.Calendar(document.getElementById("uc"), {
+            plugins: ['dayGrid', 'bootstrap', 'timeGrid', 'list'],
+            height: window.innerHeight - 120,
+            themeSystem: 'bootstrap',
+            defaultView: $(window).width() < 768 ? 'timeGridDay' : 'dayGridMonth',
+            timeZone: 'local',
+            locale: 'fr',
+            firstDay: 1,
+            nowIndicator: true,
+            allDayText: 'journée\nentière',
+            fixedWeekCount: false,
+            slotEventOverlap: false,
+            header: {
+                left: 'title',
+                right: $(window).width() < 768 ? 'prev,next' : 'today dayGridMonth,timeGridWeek,timeGridDay prev,next'
+            },
+            buttonText: {
+                today: 'maintenant',
+                month: 'mois',
+                week: 'semaine',
+                day: 'jour',
+            },
+            eventRender: function(info) {
+                let ev = info.event._def
+                let cont = "";
+                cont += `<header><i class="fas fa-calendar-alt"></i> ${ev.title}</header>`;
+                if(ev.extendedProps.location) { cont += `<footer><i class="fas fa-map-marker-alt"></i> ${ev.extendedProps.location}</footer>` };
+                if(ev.extendedProps.description) { cont += `<p><i class="fas fa-align-left"></i> ${ev.extendedProps.description}</p>` };
+                tippy(info.el, {
+                    content: cont,
+                    theme: "hb",
+                    hideOnClick: true
+                });
+            }
+        });
+
+        // Events
+        cals.calendars.forEach(function (c, i) {
+            $("#cals-legends").removeAttr("style");
+            // Legend under calendar
+            $("#calx-legend").clone().appendTo("#cals-legends");
+            $("#cals-legends #calx-legend").attr("id", xTn("calx-legend"));
+            $(xTn("#calx-legend" + " span")).append(c.alias || "<em>Calendrier sans nom</em>");
+            // addEvents
+            if(c.visible) {
+                c.events.forEach(function (e) {
+                    calendar.addEvent({
+                        id: e.uid,
+                        title: e.summary,
+                        description: e.description,
+                        location: e.location,
+                        start: new Date(e.start),
+                        end: new Date(e.end),
+                        color: c.color
+                    })
+                })
+                $(xTn("#calx-legend")).attr("style", "color:" + c.color);
+            } else {
+                $(xTn("#calx-legend")).attr("style", "color:#ccc");
+                $(xTn("#calx-legend")).attr("title", "calendrier masqué");
+                $(xTn("#calx-legend")).css("cursor", "help");
+            }
+            function xTn(x) {
+                return x.replace(/x/g, i)
+            }
+        })
+        // Legend if no calendar
+        if(cals.length == 0) {
+            $("#noCal").appendTo("#cals-legends");
+        }
+
+        // Collisions
+        cals.collisions.forEach(function (c, i) {
+            calendar.addEvent({
+                title: "collision",
+                color: "#dc3545",
+                start: new Date(c.start),
+                end: new Date(c.end),
+                allDay: true,
+                rendering: "background",
+                overlap: false,
+            });
+        })
+
+        // Render
+        calendar.render();
+    }
+
+    function calendarsLoaded(data) {
+        data = JSON.parse(data.response)
+        $("#loading-cals").hide();
+        $("#uc").removeAttr("style");
+        $("#calc-legends").removeAttr("style");
+        $("#collisionsCount").html(data.collisions.length);
+        generateCalendar(data);
+    }
+
+    // Start
+    calendarsRequest(calendarsLoaded);
+
+    tokenInfosRequest(function(data) {
+        if(data.err) {
+            console.warn('Token error:', data.err);
+            $("#subLinkModalButton").attr("data-target", "#modal-emailNotVerified");
+            $("#dlLink").attr("data-toggle", "modal").attr("data-target", "#modal-emailNotVerified");
+        } else {
+            console.log(`Your token : ${data.token}`);
+            $("#dlLink").attr("href", data.subLink).attr("target", "_blank");
+            $("#subLink").val(data.subLink);
+            $("#subLink").attr("data-toggle", "modal");
+        }
+    })
+
+</script>

@@ -1,0 +1,164 @@
+<div id="sqlContainer" class="container">
+    <h2>requête SQL</h2>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-database"></i></span>
+        </div>
+        <input type="text" class="form-control" id="sqlRequest" style="font-family: monospace;">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="sqlRequestSubmit()"><i class="fas fa-sync-alt"></i></button>
+            <button class="btn btn-outline-secondary" type="button" onclick="sqlCommandModal()"><i class="fas fa-save"></i></button>
+        </div>
+    </div>
+    <div id="sqlZone" style="max-height: calc(100vh - 280px); overflow-y: auto;">
+        <h3 id="sqlTitle"></h3>
+        <div id="sqlTable"></div>
+    </div>
+    <div id="sqlCommands"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="sqlCommandModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <form class="modal-content" id="sqlCommandForm">
+            <div class="modal-header">
+                <h5 class="modal-title">commande sql</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">commande</span>
+                    </div>
+                    <input type="text" name="command" class="form-control" style="font-family: monospace;" required>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">alias</span>
+                    </div>
+                    <input type="text" name="alias" class="form-control" required maxlength="20">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">ajouter</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bin -->
+<div id="bin" style="display: none;">
+    <div class="btn-group m-2 sqlCommandContainer">
+        <button class="btn btn-primary sqlCommand"></button>
+        <button class="btn btn-secondary sqlDelete"><i class="fas fa-minus"></i></button>
+    </div>
+</div>
+
+<script src="/ressources/js/calendarsRequest.js"></script>
+<script src="/ressources/js/sqlAction.js"></script>
+
+<!-- Tabulator JS -->
+<link href="/ressources/css/tabulator.min.css" rel="stylesheet">
+<script src="/ressources/js/tabulator.min.js"></script>
+
+<script>
+    // Collisions display
+    calendarsRequest(function(data) {
+        $("#collisionsCount").html(JSON.parse(data.response).collisions.length);
+    })
+
+    // build Tabulator
+    function sqlTab(data) {
+        if(!Array.isArray(data)) data = [data];
+        let tab = new Tabulator("#sqlTable", {
+            data: data,
+            autoColumns: true,
+            history: true,
+            movableColumns: true,
+            dataTree: true
+        })
+    }
+
+    // sql request submit
+    function sqlRequestSubmit() {
+        let request = $("#sqlRequest").val();
+        // Clear div's
+        $("#sqlZone *").each(function(i, e) {
+            $(e).empty();
+        })
+        // Request
+        if(request) {
+            sqlAction('request', request, function(data) {
+                data = JSON.parse(data.response);
+                if(data.results || data.error) {
+                    if(data.results) {
+                        $("#sqlTitle").html(`<i class="fas fa-check-circle"></i> Résultat`);
+                        sqlTab(data.results);
+                    } else {
+                        $("#sqlTitle").html(`<i class="fas fa-exclamation-circle"></i> Erreur`);
+                        sqlTab(data.error);
+                    }
+                } else {
+                    $("#sqlTitle").append(`<i class="fas fa-exclamation-circle"></i> Erreur`);
+                    $("#sqlError").append("Pas de réponse");
+                }
+            })
+        } else {
+            $("#sqlError").append("Pas de requête");
+        }
+    }
+
+    // build sqCommands buttons
+    function buildSqlCommandsButtons() {
+        sqlAction('getCommands', null, function(data) {
+            data = JSON.parse(data.response);
+            $("#sqlCommands").empty();
+            data.forEach(function(d) {
+                let b = $("#bin .sqlCommandContainer").clone();
+                b.children(".sqlCommand").append(d.alias).click(function() { loadSqlCommand(d.command) });
+                b.children(".sqlDelete").attr("data-id", d.id).click(function() { if(confirm("Supprimer la commande SQL ?")) sqlCommandRemove(d.id) })
+                $("#sqlCommands").append(b);
+            })
+        })
+    }
+
+    // sqlCommandModal form submit
+    $("#sqlCommandForm").submit(function(e) {
+        e.preventDefault();
+        let sqlCommand = {
+            command: $("#sqlCommandForm input[name=command]").val(),
+            alias: $("#sqlCommandForm input[name=alias]").val()
+        };
+        sqlAction('add', sqlCommand, function(data) {
+            if(data.status == 200) buildSqlCommandsButtons();
+            $("#sqlCommandModal").modal('hide');
+        })
+    })
+
+    // sqlCommand Loading
+    function loadSqlCommand(command) {
+        $("#sqlRequest").val(command);
+        sqlRequestSubmit();
+    }
+
+    // sqlCommand Open Modal
+    function sqlCommandModal() {
+        let command = $("#sqlRequest").val();
+        $("#sqlCommandModal").modal('show');
+        $("#sqlCommandForm input").val("");
+        $("#sqlCommandForm input[name=command]").val($("#sqlRequest").val());
+    }
+
+    // sqlCommand Delete
+    function sqlCommandRemove(id) {
+        sqlAction('remove', {id: id}, function(data) {
+            if(data.status == 200) buildSqlCommandsButtons();
+        })
+    }
+
+    // Start
+    buildSqlCommandsButtons();
+</script>

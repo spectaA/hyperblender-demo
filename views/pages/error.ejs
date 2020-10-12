@@ -1,0 +1,7 @@
+<% if(errorRedirect) { %>
+    <meta http-equiv="refresh" content="5;URL=<%=errorRedirect%>"> 
+<% } %>
+<div class="container">
+    <h1 class="display-1"><%=errorCode%></h1>
+    <p class="lead"><%=errorText%></p>
+</div>

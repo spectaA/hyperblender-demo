@@ -1,0 +1,14 @@
+<div class="container">
+    <div class="fileName lead py-4">
+        <%-fileName%>
+    </div>
+    <div class="fileInfos"></div>
+    <div class="border border-dark p-2 text-monospace fileContent" style="white-space: break-spaces; background: #eee;"></div>
+</div>
+
+<script src="/ressources/js/basicGetRequest.js"></script>
+<script>
+    getRequest('/api/logFile/<%-fileName%>', function(data) {
+        $(".fileContent").html(data);
+    })
+</script>
